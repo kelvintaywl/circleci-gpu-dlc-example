@@ -1,0 +1,37 @@
+---
+version: 2.1
+
+orbs:
+  docker: circleci/docker@2.1
+
+x-install-docker-compose: &install-docker-compose
+  docker/install-docker-compose:
+    version: v2.9.0
+
+jobs:
+  build_image:
+    machine:
+      image: ubuntu-2004-cuda-11.4:202110-01
+      docker_layer_caching: true
+    resource_class: gpu.nvidia.medium
+    working_directory: /home/circleci/project
+    environment:
+      DOCKER_BUILDKIT: '1'
+      BUILDKIT_PROGRESS: plain
+    steps:
+      - checkout
+      - <<: *install-docker-compose
+      - run:
+          name: Pull test images
+          command: |
+            docker-compose --ansi=never -f docker-compose.yml build
+
+workflows:
+  pipeline:
+    jobs:
+      - build_image:
+          context:
+            - DockerHub
+          filters:
+            tags:
+              only: /^\d+\.\d+\.\d+$/
