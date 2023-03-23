@@ -1,13 +1,6 @@
 ---
 version: 2.1
 
-orbs:
-  docker: circleci/docker@2.1
-
-x-install-docker-compose: &install-docker-compose
-  docker/install-docker-compose:
-    version: v2.9.0
-
 jobs:
   build_image:
     machine:
@@ -20,7 +13,6 @@ jobs:
       BUILDKIT_PROGRESS: plain
     steps:
       - checkout
-      - <<: *install-docker-compose
       - run:
           name: Pull test images
           command: |
