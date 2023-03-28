@@ -29,6 +29,10 @@ jobs:
           name: Build images
           command: |
             docker-compose --ansi=never -f docker-compose.yml build
+      - run:
+          name: Inspect images
+          command: |
+            docker image ls
 
 workflows:
   pipeline:
