@@ -1,12 +1,24 @@
 ---
 version: 2.1
 
-jobs:
-  build_image:
+executors:
+  gpu:
     machine:
       image: ubuntu-2004-cuda-11.4:202110-01
       docker_layer_caching: true
-    resource_class: gpu.nvidia.medium
+    resource_class: gpu.nvidia.medium   
+  linux:
+    machine:
+      image:
+      docker_layer_caching: true
+    resource_class: medium
+
+jobs:
+  build_image:
+    parameters:
+      exec:
+        type: executor
+    executor: << parameters.exec >>
     working_directory: /home/circleci/project
     environment:
       DOCKER_BUILDKIT: '1'
@@ -22,8 +34,8 @@ workflows:
   pipeline:
     jobs:
       - build_image:
-          context:
-            - DockerHub
-          filters:
-            tags:
-              only: /^\d+\.\d+\.\d+$/
+          matrix:
+            parameters:
+              exec:
+                - gpu
+                - linux
