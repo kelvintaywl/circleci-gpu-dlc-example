@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull test images
+          name: Build images
           command: |
             docker-compose --ansi=never -f docker-compose.yml build
 
